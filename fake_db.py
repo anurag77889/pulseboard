@@ -15,6 +15,14 @@ ACTION_TYPES = {
     "bookmarked"
 }
 
+LEADERBOARD_SEED = [
+    ("Anurag", 1500),
+    ("Priya",  2200),
+    ("Rohan",  980),
+    ("Sneha",  3100),
+    ("Dev",    750),
+]
+
 
 def validate_action(action_type: str) -> bool:
     return action_type in ACTION_TYPES
