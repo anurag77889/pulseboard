@@ -11,9 +11,66 @@ from pydantic import BaseModel
 # Phase 3 imports
 from fake_db import LEADERBOARD_SEED
 
+# Phase 4 imports
+from fake_db import verify_credentials, generate_session_token
+
+SESSION_TTL = 1800
+
+
+# Get session data (used by protected endpoints)
+def get_session(token: str) -> dict | None:
+    session_key = f"session:{token}"
+
+    session_data = r.hgetall(session_key)
+
+    if not session_data:
+        return None
+
+    r.expire(session_key, SESSION_TTL)
+
+    return session_data
+
 
 app = FastAPI(title="PulseBoard API")
 r = get_redis()
+
+
+# Endpoint 1: Login - create a session
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+@app.post("/auth/login")
+def login(req: LoginRequest):
+    user = verify_credentials(req.username, req.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid Credentials")
+
+    token = generate_session_token()
+    login_session_key = f"session:{token}"
+
+    login_session_data = {
+        "user_id":          user["id"],
+        "username":         user["name"],
+        "role":             "member",
+        "device":           "web",
+        "created_at":       str(time.time()),
+        "last_seen":        str(time.time()),
+        "request_count":    "0",
+    }
+
+    r.hset(login_session_key, mapping=login_session_data)
+
+    r.expire(login_session_key, SESSION_TTL)
+
+    return {
+        "token": token,
+        "user_id": user["id"],
+        "message": "Login successuf"
+    }
+
 
 CACHE_TTL = 60
 
