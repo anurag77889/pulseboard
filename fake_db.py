@@ -1,4 +1,5 @@
 import time
+import secrets
 
 USERS = {
     "u1": {"id": "u1", "name": "Anurag", "city": "Mumbai", "score": 1500},
@@ -22,6 +23,32 @@ LEADERBOARD_SEED = [
     ("Sneha",  3100),
     ("Dev",    750),
 ]
+
+USER_CREDENTIALS = {
+    "Anurag": "password123",
+    "Priya":  "securepass",
+    "Rohan":  "mypassword",
+    "Sneha":  "pass456",
+    "Dev":    "devpass",
+}
+
+
+def verify_credentials(username: str, password: str) -> dict | None:
+    """Returns the user dict if valid, None if invalid."""
+    if USER_CREDENTIALS.get(username) != password:
+        return None
+
+    # Find user in USERS by name
+    for user in USERS.values():
+        if user["name"] == username:
+            return user
+
+    return None
+
+
+def generate_session_token() -> str:
+    """Cryptographically secure random token - 32 bytes = 64 hex chars."""
+    return secrets.token_hex(32)
 
 
 def validate_action(action_type: str) -> bool:
