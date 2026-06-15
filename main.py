@@ -72,6 +72,42 @@ def login(req: LoginRequest):
     }
 
 
+# Endpoint 2: Get current session info
+
+@app.get("/auth/session")
+def get_session_info(token: str):
+    session = get_session(token)
+    if not session:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired session")
+
+    session_key = f"session:{token}"
+    ttl = r.ttl(session_key)
+
+    return {**session, "ttl_remaining": ttl}
+
+
+# Endpoint 3: Increment request count (partial field update)
+
+@app.post("/auth/session/ping")
+def ping_session(token: str):
+    session = get_session(token)
+    session_key = f"session:{token}"
+    if not session:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired session")
+
+    new_count = r.hincrby(session_key, "request_count", 1)
+    r.hset(session_key, "last_session", str(time.time()))
+
+    return {
+        "status":       "alive",
+        "request_count": new_count,
+    }
+
+
 CACHE_TTL = 60
 
 # ----- Phase 3 ----------------------------------------------
