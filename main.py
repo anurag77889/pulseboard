@@ -138,6 +138,31 @@ def logout(token: str):
     return {"message": "Logged out successfully"}
 
 
+# Endpoint 6: Debug - see all active sessions (learning tool)
+
+@app.get("/auth/sessions/debug")
+def list_all_sessions():
+    session_keys = r.keys("session:*")
+
+    sessions = []
+
+    for key in session_keys:
+        values = r.hmget(
+            session_keys,
+            ["username", "request_count", "last_seen"])
+        sessions.append({
+            "key":              key,
+            "username":         values[0],
+            "request_count":    values[1],
+            "ttl":              r.ttl(session_keys),
+        })
+
+    return {
+        "active_sessions": len(sessions),
+        "sessions": sessions
+    }
+
+
 CACHE_TTL = 60
 
 # ----- Phase 3 ----------------------------------------------
