@@ -124,6 +124,20 @@ def get_identity(token: str):
     return dict(zip(fields, values))
 
 
+# Endpoint 5: Logout - destroy session
+
+@app.post("/auth/logout")
+def logout(token: str):
+    session_key = f"session:{token}"
+
+    deleted = r.delete(session_key)
+
+    if not deleted:
+        raise HTTPException(status_code=401, detail="Session not found")
+
+    return {"message": "Logged out successfully"}
+
+
 CACHE_TTL = 60
 
 # ----- Phase 3 ----------------------------------------------
