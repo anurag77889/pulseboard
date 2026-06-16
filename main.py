@@ -108,6 +108,22 @@ def ping_session(token: str):
     }
 
 
+# Endpoint 4: Fetch only specific fields (selective read)
+# The whole point of hashes = don't pay for what you don't need
+
+@app.get("/auth/session/identity")
+def get_identity(token: str):
+    session_key = f"session:{token}"
+
+    fields = ["user_id", "username", "role"]
+    values = r.hmget(session_key, fields)
+
+    if not values[0]:
+        raise HTTPException(status_code=401, detail="Invalid session")
+
+    return dict(zip(fields, values))
+
+
 CACHE_TTL = 60
 
 # ----- Phase 3 ----------------------------------------------
