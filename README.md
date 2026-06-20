@@ -3,3 +3,4 @@ A Social Feeds app developed using FastAPI and Redis
 
 Features
 - Storing session info in Redis cache
+- Hash IP for instant connection
