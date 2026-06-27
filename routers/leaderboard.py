@@ -10,12 +10,10 @@ r = get_redis()
 LEADERBOARD_KEY = "leaderboard:global"
 
 
-# ------ Startup: seed leaderboard from "DB" into redis ------
-@router.on_event("startup")
-def seed_leaderboard():
-    mapping = dict(LEADERBOARD_SEED)
-    r.zadd(LEADERBOARD_KEY, mapping)
-    print(f"Leaderboard seeded with {len(mapping)} users")
+def seed():
+    """Called once on startup from main.py"""
+    r.zadd(LEADERBOARD_KEY,
+           {member: score for member, score in LEADERBOARD_SEED})
 
 
 # Endpoint 1: Get top-N leaderboard
