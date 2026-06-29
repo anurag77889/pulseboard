@@ -92,7 +92,7 @@ def clear_feed(user_id: str):
 
 # Endpoint 4: Peek at feed internals (learning tool)
 
-@router.get("users/{user_id}/feed/debug")
+@router.get("/users/{user_id}/feed/debug")
 def debug_feed(user_id: str):
     feed_key = f"feed:{user_id}"
 

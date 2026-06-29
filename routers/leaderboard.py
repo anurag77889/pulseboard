@@ -18,7 +18,7 @@ def seed():
 
 # Endpoint 1: Get top-N leaderboard
 
-@router.get("/leaderboard")
+@router.get("/")
 def get_leaderboard(top_n: int = 5):
     results = r.zrevrange(LEADERBOARD_KEY, 0, top_n - 1, withscores=True)
 
@@ -32,7 +32,7 @@ def get_leaderboard(top_n: int = 5):
 
 # Endpoint 2: Add points to a user (the "earn points" action)
 
-@router.post("/leaderboard/{username}/add-points")
+@router.post("/{username}/add-points")
 def add_points(username: str, points: int):
     new_score = r.zincrby(LEADERBOARD_KEY, points, username)
 
@@ -46,7 +46,7 @@ def add_points(username: str, points: int):
 
 
 # Endpoint 3: Get a specific user's rank and score
-@router.get("/leaderboard/{username}/rank")
+@router.get("/{username}/rank")
 def get_user_rank(username: str):
     score = r.zscore(LEADERBOARD_KEY, username)
     rank = r.zrevrank(LEADERBOARD_KEY, username)
@@ -68,7 +68,7 @@ def get_user_rank(username: str):
 
 
 # Endpoint 4: Get users within a score range
-@router.get("/leaderboard/range/scores")
+@router.get("/range/scores")
 def get_users_in_score_range(min_score: int = 1000, max_score: int = 2000):
     results = r.zrangebyscore(
         LEADERBOARD_KEY,
@@ -86,7 +86,7 @@ def get_users_in_score_range(min_score: int = 1000, max_score: int = 2000):
 
 
 # Endpoint 5: Remove a user from leaderboard
-@router.delete("/leaderboard/{username}")
+@router.delete("/{username}")
 def remove_from_leaderboard(username: str):
     removed = r.zrem(LEADERBOARD_KEY, username)
 
@@ -94,4 +94,3 @@ def remove_from_leaderboard(username: str):
         raise HTTPException(status_code=404, detail=f"{username} not found")
 
     return {"removed": username}
-
