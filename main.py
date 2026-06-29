@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import cache, feed, leaderboard, sessions
+from routers import cache, feed, leaderboard, sessions, presence
 
 app = FastAPI(title="Pulseboard API")
 
@@ -11,6 +11,7 @@ app = FastAPI(title="Pulseboard API")
 @app.on_event("startup")
 def on_startup():
     leaderboard.seed()
+    presence.seed()
 
 
 # ─── Mount all routers ────────────────────────────
@@ -19,3 +20,4 @@ app.include_router(cache.router)
 app.include_router(feed.router)
 app.include_router(leaderboard.router)
 app.include_router(sessions.router)
+app.include_router(presence.router)
