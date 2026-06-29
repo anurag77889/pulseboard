@@ -26,11 +26,10 @@ def mark_online(username: str):
     if not username_exists:
         return HTTPException(status_code=404, detail="User not found")
 
-    # Add username to the online set
     added = r.sadd(ONLINE_SET_KEY, username)
 
     return {
-        "user":             username,
+        "username":         username,
         "status":           "online",
         "already_online":   added == 0,
         "online_count":     r.scard(ONLINE_SET_KEY)  # scard = set cardinality
@@ -50,4 +49,32 @@ def mark_offline(username: str):
         "status":               "offline",
         "was_online":           removed == 1,
         "online_count":         r.scard(ONLINE_SET_KEY)
+    }
+
+
+# Endpoint 3: Check if a specific user is online
+
+@router.get("/presence/{username}/status")
+def check_online_status(username: str):
+
+    # Check membership in 0(1) - this is Sets' killer feature
+    is_online = r.ismember(ONLINE_SET_KEY, username)
+
+    return {
+        "user": username,
+        "online": is_online
+    }
+
+
+# Endpoint 4: Get all online users
+
+@router.get("/presence/online/all")
+def get_all_online_users():
+
+    # Fetch every member of the set
+    online_users = r.smembers(ONLINE_SET_KEY)
+
+    return {
+        "count": len(online_users),
+        "users": list(online_users)
     }
