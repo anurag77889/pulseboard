@@ -32,6 +32,21 @@ USER_CREDENTIALS = {
     "Dev":    "devpass",
 }
 
+# Seed follow relationships - maps username -> list of who they follow
+FOLLOW_GRAPH = {
+    "Anurag": ["Priya", "Sneha", "Dev", "Rohan"],
+    "Priya": ["Sneha", "Dev", "Kiran", "Meera"],
+    "Rohan": ["Anurag", "Dev", "Meera"],
+    "Sneha": ["Anurag", "Priya", "Kiran"],
+    "Dev": ["Anurag", "Priya", "Rohan", "Sneha"]
+}
+
+ALL_USERNAMES = {"Anurag", "Priya", "Rohan", "Sneha", "Dev", "Kiran", "Meera"}
+
+
+def username_exists(username: str) -> bool:
+    return username in ALL_USERNAMES
+
 
 def verify_credentials(username: str, password: str) -> dict | None:
     """Returns the user dict if valid, None if invalid."""
