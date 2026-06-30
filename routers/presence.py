@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from redis_client import get_redis
 from fake_db import FOLLOW_GRAPH, username_exists
 
-router = APIRouter(tags=["Phase 5 - Presence"])
+router = APIRouter(tags=["Phase 5 - Presence"], prefix="/presence")
 r = get_redis()
 
 ONLINE_SET_KEY = "online:users"
@@ -21,7 +21,7 @@ def seed():
 
 # Endpoint 1: Mark user as online
 
-@router.post("/presence/{username}/online")
+@router.post("/{username}/online")
 def mark_online(username: str):
     if not username_exists:
         return HTTPException(status_code=404, detail="User not found")
@@ -38,7 +38,7 @@ def mark_online(username: str):
 
 # Endpoint 2: Mark user as offline
 
-@router.post("/presence/{username}/offline")
+@router.post("/{username}/offline")
 def mark_offline(username: str):
 
     # Remove username from the online set
@@ -54,11 +54,11 @@ def mark_offline(username: str):
 
 # Endpoint 3: Check if a specific user is online
 
-@router.get("/presence/{username}/status")
+@router.get("/{username}/status")
 def check_online_status(username: str):
 
     # Check membership in 0(1) - this is Sets' killer feature
-    is_online = r.ismember(ONLINE_SET_KEY, username)
+    is_online = r.sismember(ONLINE_SET_KEY, username)
 
     return {
         "user": username,
@@ -68,7 +68,7 @@ def check_online_status(username: str):
 
 # Endpoint 4: Get all online users
 
-@router.get("/presence/online/all")
+@router.get("/online/all")
 def get_all_online_users():
 
     # Fetch every member of the set
