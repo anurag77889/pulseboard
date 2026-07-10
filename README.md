@@ -2,8 +2,6 @@
 
 A small FastAPI backend built to learn **Redis end-to-end** — not just "what is Redis," but how each of its core data structures solves a real production problem.
 
-No fluff, no over-engineering. Six features, six Redis data types, all wired into one working API.
-
 ---
 
 ## Why this project exists
