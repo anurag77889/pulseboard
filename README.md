@@ -1,4 +1,4 @@
-# PulseBoard 🔴
+# PulseBoard
 
 A small FastAPI backend built to learn **Redis end-to-end** — not just "what is Redis," but how each of its core data structures solves a real production problem.
 
@@ -26,11 +26,9 @@ By the time you've played with all six, you'll understand *why* Redis is used th
 ## What you'll need
 
 - Python 3.10+
-- Redis running locally (instructions below)
+- Redis running locally
 - `curl` or Postman/Swagger UI for testing
 - ~30–60 minutes if you want to walk through every feature
-
-No Docker, no cloud account, no signup. Everything runs on your machine.
 
 ---
 
