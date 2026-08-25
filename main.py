@@ -3,6 +3,21 @@ from routers import cache, feed, leaderboard, sessions, presence
 
 app = FastAPI(title="Pulseboard API")
 
+
+@app.get("/")
+def root():
+    return {
+        "message": "PulseBoard API is running",
+        "docs": "/docs",
+        "health": "/health",
+    }
+
+
+@app.get("/health")
+def health():
+    return {"status": "healthy"}
+
+
 # ─── Startup: seed data that needs Redis to be ready ──────
 # Seed functions live in their router files but are called from one place here.
 # This keeps startup logic centralized and easy to find.
