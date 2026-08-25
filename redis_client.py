@@ -1,8 +1,10 @@
+import os
+
 import redis
 
-# redis.Redis() connects to localhost:6379 by default
-# decode_responses=True means all returned values are str, not bytes
-r = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
+# Use REDIS_URL in production (Render) and fall back to local Redis for development.
+redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+r = redis.from_url(redis_url, decode_responses=True)
 
 
 def get_redis():
